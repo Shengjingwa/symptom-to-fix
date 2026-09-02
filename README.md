@@ -9,7 +9,7 @@
 仓库公开之后：
 
 ```text
-npx skills add Shengjingwa/symptom-to-fix-skill
+npx skills add Shengjingwa/symptom-to-fix
 ```
 
 也可以把 `skills/symptom-to-fix/` 整目录拷到本机：
