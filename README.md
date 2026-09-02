@@ -1,35 +1,40 @@
-# nontrivial-bug
+# symptom-to-fix
 
-给编码 agent 用的 skill：原因一下子看不出来的 bug，先定范围、用一条会红的命令定位，必要时写下方案文件，再按测试先行修好，最后用本轮跑过的证据验收。
+给编码 agent 用的 skill：原因一下子看不出来的 bug，先问清要修什么、用一条会失败的复现命令定位，写下改法说明，再按先失败再通过修好，最后用本轮跑过的证据验收。
 
-一眼能改的笔误、明确的小修补、纯功能设计，不要走这套。
+一眼能改的笔误、明确的小修补、纯功能设计，走别的办法。
 
 ## 安装
 
 仓库公开之后：
 
 ```text
-npx skills add Shengjingwa/nontrivial-bug-skill
+npx skills add Shengjingwa/symptom-to-fix-skill
 ```
 
-也可以把 `skills/nontrivial-bug/` 整目录拷到本机：
+也可以把 `skills/symptom-to-fix/` 整目录拷到本机：
 
-- Cursor / Codex：`~/.agents/skills/nontrivial-bug/`
-- Claude Code：`~/.claude/skills/nontrivial-bug/`
+- Cursor：`~/.cursor/skills/symptom-to-fix/`，Windows 上是 `%USERPROFILE%\.cursor\skills\symptom-to-fix\`
+- Claude Code：`~/.claude/skills/symptom-to-fix/`
+- Codex：`~/.codex/skills/symptom-to-fix/`
 
-目录名必须是 `nontrivial-bug`，和 `SKILL.md` 里的 `name` 一致。新开一聊后敲 `/nontrivial-bug`，或在说「排查 / 原因看不出 / 先别改」时由 agent 自行加载。
+目录名必须是 `symptom-to-fix`，和 `SKILL.md` 里的 `name` 一致。拷完打开一次 `symptom-to-fix/SKILL.md` 确认读得到：只在技能列表里出现不算装上。新开一聊后敲 `/symptom-to-fix`，或在说「排查 / 原因看不出 / 先别改」时由 agent 自行加载。
+
+用户级目录只在 agent 实际运行的那台机器上加载。要在 Cloud Agent 或远程会话里用，把 `symptom-to-fix/` 放进仓库的 `.cursor/skills/`。
 
 ## 五段
 
-1. **定范围** — 写清看见什么、期望、算修好、这次不修什么。仓库能查的自己查。
-2. **诊断** — 先有一条已跑过、针对这个症状会红的命令。根因要用机制说清。这阶段不改生产代码。
-3. **选路** — 方案落到 `.scratch/bug-<短名>.md`。一条路写短文件接着做；2–3 条互斥路才并行出方案，并问人一句。
-4. **红绿** — 一次一条竖切。第一条测试必须先红再改实现。
-5. **收尾** — 重跑原始命令、清调试打点、对照方案文件审 diff。不自动提交。
+1. **说清要修什么** — 写清看见什么、期望、算修好、这次不修什么，每句带出处。仓库能查的自己查。
+2. **找到原因** — 先有一条已跑过、针对这个症状会失败的复现命令。根因要用机制说清。这一段不改生产代码。
+3. **定改法** — 改法说明落到 `.scratch/bug-<短名>.md`。这一段必做；一条路写短文件接着做；2–3 条互斥路才并行出方案，并问人一句。
+4. **先失败再通过** — 一次只做一条。第一条测试必须先看见失败再改实现。
+5. **验收** — 重跑原始命令、清调试打点、对照改法说明审工作区 diff，并给出 commit 信息草稿。不自动提交。
 
-## 可选伴随 skill
+每段都有过不去就不许往下走的条件，写在 `SKILL.md` 各段末尾的「完成」里。说了「先别改」就做到第 3 段停下，等你给往下改的许可。
 
-本 skill 可以单独用。若本机已经有 `diagnosing-bugs`、`tdd`、`grilling`、`code-review`，会优先走它们，本文件只负责路由和闸门。
+## 前置依赖
+
+本 skill 不能单独用：第 2 段要 `diagnosing-bugs`，第 4 段要 `tdd`，两份都在 https://github.com/mattpocock/skills 的 `skills/engineering/` 下。缺哪个就停在对应那一段。本文件只负责什么时候交给它们，以及每段的过关条件。
 
 ## 许可证
 
